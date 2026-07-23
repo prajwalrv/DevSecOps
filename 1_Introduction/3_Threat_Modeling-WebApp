@@ -1,0 +1,94 @@
+===================================================================== ==> THREAT MODELLNG  
+AGENDA : [Identify, Analyze, & Mititgate Issues in the application] ==> Tool - OWASP Threat Dragon
+
+==> OWASP THreat dragon [Download]
+
+THREAT MODELING FLOW WITH OWASP THREAT DRAGON
+=============================================================================
+
+[ 1. CREATE ] -----> [ 2. DIAGRAM ] -----> [ 3. ANALYZE ] -----> [ 4. MITIGATE ]
+      |                   |                    |                    |
+      v                   v                    v                    v
++-----------+         +-----------+        +-----------+        +-----------+
+| NEW MODEL |         | DRAW DFD  |        | AUTO-     |        | DEFINE    |
+| & TITLE   |         | (Data Flow|        | GENERATE  |        | COUNTER-  |
+| (Scope)   |         |  Diagram) |        | THREATS   |        | MEASURES  |
++-----+-----+         +-----+-----+        +-----+-----+        +-----+-----+
+      |                   |                    |                    |
+      | Define System     | Add Elements:      | Select Framework:  | Assign Actions:
+      | Boundaries        | - Processes        | - STRIDE           | - "Mitigated"
+      |                   | - Data Stores      | - LINDDUN          | - "Research"
+      |                   | - Actors           | - CIA              | - "Not Applicable"
+      |                   | - Trust Boundaries |                    |
+      |                   |                    | Tool suggests      | Output: Updated
+      |                   |                    | threats per element| Diagram + Report
+      |                   |                    |                    |
+      +---------+---------+---------+----------+---------+----------+
+                |                   |                    |
+                v                   v                    v
+           [ 5. VALIDATE ] -----> [ 6. EXPORT ] -----> [ 7. TRACK ]
+                |                   |                    |
+                v                   v                    v
+           +-----------+       +-----------+        +-----------+
+           | REVIEW    |       | JSON/PDF  |        | JIRA /    |
+           | WITH TEAM |       | EXPORT    |        | GITHUB    |
+           +-----------+       +-----------+        +-----------+
+                |                   |                    |
+                | Team confirms     | Save model to      | Create tickets for
+                | threats are real  | Git Repo (IaC)     | developers to fix
+                |                   |                    | in CODE phase
+                |                   |                    |
+                +-------------------+--------------------+
+                                    |
+                                    v
+                              (FEEDBACK LOOP)
+                              Update model as
+                              code changes
+
+=============================================================================
+STEP-BY-STEP EXPLANATION:
+
+1. CREATE (Scope):
+   - Open Threat Dragon.
+   - Define the "Title" and "Owner" of the threat model.
+   - Set the scope: What part of the application are we modeling?
+
+2. DIAGRAM (Visualize):
+   - Drag and drop elements onto the canvas:
+     * Actor (User)
+     * Process (Web Server)
+     * Data Store (Database)
+     * Flow (Network lines)
+   - Draw "Trust Boundaries" (dashed lines) to separate secure/unsecure zones.
+
+3. ANALYZE (Identify Threats):
+   - Click on any element (e.g., the Data Store).
+   - Threat Dragon automatically generates potential threats based on STRIDE.
+     * Example for Data Store: "Tampering" (Can data be altered?)
+     * Example for Flow: "Information Disclosure" (Is data encrypted?)
+
+4. MITIGATE (Plan Fixes):
+   - For each generated threat, select a status:
+     * "Mitigated": We already have a control (e.g., Encryption).
+     * "To Do": We need to write code to fix this.
+     * "Not Applicable": This threat doesn't apply.
+   - Add notes describing the specific mitigation strategy.
+
+5. VALIDATE (Peer Review):
+   - Share the diagram with the security team and developers.
+   - Ensure no major threats were missed and mitigations are realistic.
+
+6. EXPORT (Version Control):
+   - Save the model as a `.json` file.
+   - Commit this file to the Git repository alongside the source code.
+   - This ensures the threat model evolves with the code (Infrastructure as Code).
+
+7. TRACK (Execution):
+   - Export threats to issue trackers (Jira, GitHub Issues).
+   - Developers pick up these tickets during the "Code" phase to implement the fixes.
+
+=============================================================================
+INTEGRATION POINT:
+The output of Step 4 (Mitigations) becomes the input for the 
+"Secure Coding" and "Pre-Commit" stages in your main DevSecOps pipeline.
+=============================================================================     

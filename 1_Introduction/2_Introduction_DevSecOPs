@@ -1,0 +1,112 @@
+========================================================================== ==> Introduction to DevSecOps
+Agenda : How to generate a very detail securty state of your application
+
+==> What is DevSecOps : Devops with security mindset
+	
+==> Scope of DevSecOps : 
+	
+	Common DevOps activities :
+	
+	-> Git  	-->   Pre-commit hooks [Security for Accidental secrets, files commits], RBAC to git [r,w, administrate -> repo].
+	-> IaC  	-->   Terraform -> Vault [while creating services via teraform the secrets, files utilized by teraform should be access throuh vaults]
+	-> Scripting    -->   Python - A good DevSecOps uses only no vulnerable library packges to make sure the scripts are secured.
+	-> Containers   -->   Securing the root user, Utilizing distroless images, Following Multi-stage builds - ensure build size is small & end containers have less no of packages.
+	-> Kubernetes   -->   DevOPs => Setup Kubernetes Cluster[EKS] directly - Set up =====> VPC [Virtual Private Cloud] --> PS [Personal Subnet] -> EKS [Kubernetes Cluster]
+	-> CI/CD        -->   Stages -> SAST -> Container Security - [Trivy] -> DAST -> SCA ====> Tivy Snyk, Docker etc.
+
+==> Shift Left Principle : 
+
+		THE MODERN "SHIFT LEFT" LIFECYCLE (SECURITY EVERYWHERE)
+	=============================================================================
+
+	      [ PLAN ]          [ CODE ]           [ BUILD ]          [ TEST ]
+		 |                  |                  |                  |
+	   +-----v-----+      +-----v-----+      +-----v-----+      +-----v-----+
+	   | THREAT    |      | SECURE    |      | SAST &    |      | DAST &    |
+	   | MODELING  |      | CODING  & |      | DEP SCAN  |      | IAST      |
+	   | & POLICY  |      | PRE-COMMIT|      | (Sca)     |      | TESTS     |
+	   +-----+-----+      +-----+-----+      +-----+-----+      +-----+-----+
+		 |                  |                  |                  |
+		 v                  v                  v                  v
+	      [ RELEASE ] -----> [ DEPLOY ] -----> [ OPERATE ] -----> [ MONITOR ]
+		 |                  |                  |                  |
+	   +-----v-----+      +-----v-----+      +-----v-----+      +-----v-----+
+	   | POLICY    |      | INFRA     |      | RUNTIME   |      | FEEDBACK  |
+	   | AS CODE   |      | SCAN (IaC)|      | PROTECT   |      | TO PLAN   |
+	   +-----------+      +-----------+      +-----------+      +-----------+
+
+	=============================================================================
+	KEY: 
+	SAST = Static Application Security Testing (Code Analysis)
+	DAST = Dynamic Application Security Testing (Running App Analysis)
+	IaC  = Infrastructure as Code (e.g., Kubernetes, Terraform)
+	=============================================================================  
+	
+	
+THE "SHIFT LEFT" LIFECYCLE WITH STRIDE THREAT MODELING
+=============================================================================
+
+[ PLAN ]                [ CODE ]                [ BUILD ]               [ TEST ]
+   |                       |                       |                       |
+   v                       v                       v                       v
++-----------+           +-----------+           +-----------+           +-----------+
+| THREAT    |           | SECURE    |           | AUTO-     |           | DAST &    |
+| MODELING  |           | CODING    |           | SCANNING  |           | PEN TEST  |
+| (STRIDE)  |           | (Fix S,T) |           | (Fix R,I) |           | (Fix D,E) |
++-----+-----+           +-----+-----+           +-----+-----+           +-----+-----+
+      |                       |                       |                       |
+      | 1. Identify Threats   | 2. Prevent Code Flaws | 3. Detect Issues      | 4. Validate Runtime
+      | - Spoofing (S)        | - Spoofing (Auth)     | - Tampering (Hash)    | - DoS (Load Test)
+      | - Tampering (T)       | - Tampering (Input)   | - Repudiation (Logs)  | - Elevation (Priv)
+      | - Repudiation (R)     | - Info Disc (Encrypt) | - Info Disc (Secrets) |
+      | - Info Disc (I)       | - DoS (Limits)        | - Elevation (Config)  |
+      | - DoS (D)             | - Elevation (ACLs)    |                       |
+      | - Elevation (E)       |                       |                       |
+      |                       |                       |                       |
+      +-----------+-----------+-----------+-----------+-----------+-----------+
+                  |                       |                       |
+                  v                       v                       v
+             [ RELEASE ] -----------> [ DEPLOY ] -----------> [ OPERATE ]
+                  |                       |                       |
+                  v                       v                       v
+            +-----------+           +-----------+           +-----------+
+            | POLICY    |           | INFRA     |           | RUNTIME   |
+            | GATES     |           | HARDENING |           | PROTECT   |
+            +-----------+           +-----------+           +-----------+
+                  |                       |                       |
+                  | Ensure no high-risk   | Prevent Infra-level   | Block Live Attacks
+                  | STRIDE issues pass    | STRIDE vectors        | (WAF, RASP)
+                  |                       |                       |
+                  +-----------------------+-----------------------+
+                                          |
+                                          v
+                                     [ MONITOR ]
+                                          |
+                                          v
+                                   (FEEDBACK TO PLAN)
+                                   Update STRIDE model
+                                   with new threats
+
+=============================================================================
+HOW STRIDE MAPS TO THE PHASES:
+
+1. PLAN (Threat Modeling):
+   - Ask: "How could an attacker SPOOF this user?"
+   - Ask: "Where could data be TAMPERED with?"
+   - Output: Security requirements for developers.
+
+2. CODE (Prevention):
+   - Implement Authentication (stops Spoofing).
+   - Implement Input Validation (stops Tampering).
+   - Implement Logging/Signing (stops Repudiation).
+   - Implement Encryption (stops Information Disclosure).
+   - Implement Rate Limiting (stops Denial of Service).
+   - Implement Least Privilege (stops Elevation of Privilege).
+
+3. BUILD & TEST (Verification):
+   - Static scans find hardcoded secrets (Info Disc).
+   - Dynamic scans try to crash the app (DoS) or escalate rights (Elevation).
+
+4. OPERATE (Protection):
+   - Real-time monitoring for all 6 STRIDE categories.
+=============================================================================  

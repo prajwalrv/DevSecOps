@@ -1,20 +1,23 @@
-name: "Terraform Local CI/CD"
+name: "Terraform Deployment"
 
 on:
   push:
     paths:
       - "**.tf"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy:
-    name: "Validate, Secure, and Deploy"
     runs-on: ubuntu-latest
     
-    # Forces all workflow steps to run inside this container network space
+    # Places your pipeline steps inside the same Docker bridge network namespace
     container:
       image: ubuntu:24.04
 
-    # The background service containers share the same network space
+    # Spin up the background emulator platforms automatically inside the runner
     services:
       vault:
         image: hashicorp/vault:latest
@@ -29,16 +32,34 @@ jobs:
         ports:
           - 4566:4566
 
+    defaults:
+      run:
+        working-directory: ./terraform
+
     steps:
-      - name: Checkout Source Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # This step will now successfully find your vault container at http://vault:8200
+      # Connects securely via local container DNS name instead of a hardcoded bridge IP
       - name: Fetch Keys from Vault
         uses: hashicorp/vault-action@v3
         with:
           url: http://vault:8200
-          token: "mock-root-token"
+          role: gh-actions-role
+          method: jwt
           secrets: |
-            secret/data/infra-credentials aws_access_key | AWS_ACCESS_KEY_ID ;
-            secret/data/infra-credentials aws_secret_key | AWS_SECRET_ACCESS_KEY
+            aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
+            aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
+
+      - name: Setup Terraform Binary
+        uses: hashicorp/setup-terraform@v3
+
+      # Force Terraform execution to route directly into your Floci container runtime
+      - name: Execute Terraform Pipeline
+        env:
+          AWS_ENDPOINT_URL: http://floci:4566
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          terraform init
+          terraform plan
+          terraform apply -auto-approve

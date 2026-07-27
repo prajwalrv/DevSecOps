@@ -1,6 +1,5 @@
 name: "Terraform Deployment"
 
-# 1. Triggers on absolutely any push so you can test it immediately
 on: [push]
 
 permissions:
@@ -11,7 +10,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     
-    # 2. Switched to an explicit terraform container that already has git and terraform installed
     container:
       image: hashicorp/terraform:latest
 
@@ -24,8 +22,9 @@ jobs:
           VAULT_DEV_ROOT_TOKEN_ID: "mock-root-token"
           VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
 
+      # FIXED: Matches the exact working image name from your local docker ps output!
       floci:
-        image: localstack/localstack:latest
+        image: floci/floci:latest
         ports:
           - 4566:4566
 
@@ -34,10 +33,10 @@ jobs:
         working-directory: ./terraform
 
     steps:
-      # This will now pass because the container has git pre-installed
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # This step will find your vault container at http://vault:8200
       - name: Fetch Keys from Vault
         uses: hashicorp/vault-action@v3
         with:

@@ -18,7 +18,7 @@ jobs:
       - name: Fetch Keys from Vault
         uses: hashicorp/vault-action@v3
         with:
-          url: https://recipient-satin-serious-tanks.trycloudflare.com 
+          url: https://recipient-satin-serious-tanks.trycloudflare.com
           role: gh-actions-role
           method: jwt
           secrets: |

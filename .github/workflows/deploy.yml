@@ -1,0 +1,58 @@
+name: "Terraform Deployment"
+
+# 1. Triggers on absolutely any push so you can test it immediately
+on: [push]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # 2. Switched to an explicit terraform container that already has git and terraform installed
+    container:
+      image: hashicorp/terraform:latest
+
+    services:
+      vault:
+        image: hashicorp/vault:latest
+        ports:
+          - 8200:8200
+        env:
+          VAULT_DEV_ROOT_TOKEN_ID: "mock-root-token"
+          VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+
+      floci:
+        image: flociio/floci:latest
+        ports:
+          - 4566:4566
+
+    defaults:
+      run:
+        working-directory: ./terraform
+
+    steps:
+      # This will now pass because the container has git pre-installed
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Keys from Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: http://vault:8200
+          role: gh-actions-role
+          method: jwt
+          secrets: |
+            aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
+            aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
+
+      - name: Execute Terraform Pipeline
+        env:
+          AWS_ENDPOINT_URL: http://floci:4566
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          terraform init
+          terraform plan
+          terraform apply -auto-approve

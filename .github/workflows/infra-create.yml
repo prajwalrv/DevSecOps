@@ -1,31 +1,44 @@
-name: Terraform Deployment
-on: [push]
+name: "Terraform Local CI/CD"
 
-permissions:
-  id-token: write
-  contents: read
+on:
+  push:
+    paths:
+      - "**.tf"
 
 jobs:
   deploy:
+    name: "Validate, Secure, and Deploy"
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./terraform
+    
+    # Forces all workflow steps to run inside this container network space
+    container:
+      image: ubuntu:24.04
+
+    # The background service containers share the same network space
+    services:
+      vault:
+        image: hashicorp/vault:latest
+        ports:
+          - 8200:8200
+        env:
+          VAULT_DEV_ROOT_TOKEN_ID: "mock-root-token"
+          VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+
+      floci:
+        image: flociio/floci:latest
+        ports:
+          - 4566:4566
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
+      # This step will now successfully find your vault container at http://vault:8200
       - name: Fetch Keys from Vault
         uses: hashicorp/vault-action@v3
         with:
           url: http://vault:8200
-          role: gh-actions-role
-          method: jwt
+          token: "mock-root-token"
           secrets: |
-            aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
-            aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
-
-      - uses: hashicorp/setup-terraform@v3
-      - run: terraform init
-      - run: terraform plan
-      - run: terraform apply -auto-approve
+            secret/data/infra-credentials aws_access_key | AWS_ACCESS_KEY_ID ;
+            secret/data/infra-credentials aws_secret_key | AWS_SECRET_ACCESS_KEY

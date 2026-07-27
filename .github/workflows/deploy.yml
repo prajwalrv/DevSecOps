@@ -22,7 +22,6 @@ jobs:
           VAULT_DEV_ROOT_TOKEN_ID: "mock-root-token"
           VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
 
-      # FIXED: Matches the exact working image name from your local docker ps output!
       floci:
         image: floci/floci:latest
         ports:
@@ -36,7 +35,50 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # This step will find your vault container at http://vault:8200
+      # Instantly apply your custom configurations inside the running container context
+      - name: Initialize Vault Configuration Engine
+        env:
+          VAULT_ADDR: "http://vault:8200"
+          VAULT_TOKEN: "mock-root-token"
+        run: |
+          # 1. Enable JWT Auth
+          vault auth enable jwt
+
+          # 2. Configure OIDC connection parameters 
+          vault write auth/jwt/config \
+              oidc_discovery_url="https://token.actions.githubusercontent.com" \
+              bound_issuer="https://token.actions.githubusercontent.com"
+
+          # 3. Apply your custom structural access policy
+          vault policy write terraform-policy - <<EOF
+          path "aws/creds/terraform-role" {
+            capabilities = ["read"]
+          }
+          EOF
+
+          # 4. Bind your repository strictly to the active role validation context
+          vault write auth/jwt/role/gh-actions-role - <<EOF
+          {
+            "role_type": "jwt",
+            "bound_audiences": ["https://github.com/prajwalrv"],
+            "user_claim": "sub",
+            "bound_claims_type": "glob",
+            "bound_claims": {
+              "sub": "repo:prajwalrv/DevSecOps:*"
+            },
+            "token_policies": ["terraform-policy"],
+            "token_ttl": "1h"
+          }
+          EOF
+
+          # 5. Bootstrap the dummy platform engine keys to support structural lookups
+          vault secrets enable aws
+          vault write aws/config/root \
+              access_key="AKIAV3M7X2PL9EXAMPLE" \
+              secret_key="wJalrXUtnFEMI/K7MDENG/bPxRfiCYzEXAMPLEKEY" \
+              region="us-east-1"
+          vault write aws/roles/terraform-role credential_type="iam_user"
+
       - name: Fetch Keys from Vault
         uses: hashicorp/vault-action@v3
         with:

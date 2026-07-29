@@ -1,27 +1,19 @@
 name: Terraform Deployment
 on: [push]
+
 permissions:
   id-token: write
   contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./terraform
+
     steps:
-      - uses: actions/checkout@v4 
-
-      - name: Debug OIDC token claims
-        run: |
-          echo "Requesting OIDC token with audience: https://github.com/prajwalrv"
-          curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com/prajwalrv" \
-          | jq -r '.value' > /tmp/oidc_token.jwt
-
-          echo "----- Decoded JWT claims (sub, aud, iss, exp) -----"
-          cat /tmp/oidc_token.jwt | cut -d. -f2 | base64 -d 2>/dev/null | jq '{sub, aud, iss, exp}'
-          echo "----------------------------------------------------"
+      - uses: actions/checkout@v4
 
       - name: Fetch Keys from Vault
         uses: hashicorp/vault-action@v3
@@ -29,24 +21,10 @@ jobs:
           url: http://13.50.15.185:8200
           role: gh-actions-role
           method: jwt
-          exportToken: true
           secrets: |
             aws/creds/terraform-role access_key | AWS_ACCESS_KEY_ID ;
             aws/creds/terraform-role secret_key | AWS_SECRET_ACCESS_KEY
 
-      - name: Debug Vault login response (only runs if the fetch step above fails)
-        if: failure()
-        run: |
-          echo "Vault fetch failed. Re-attempting a raw login call to see the exact error body."
-          curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com/prajwalrv" \
-          | jq "{ jwt: .value, role: \"gh-actions-role\" }" > /tmp/login.json
-
-          echo "----- Raw Vault login response -----"
-          curl -sSL -X POST -H "Content-Type: application/json" \
-            --data @/tmp/login.json \
-            http://13.50.15.185:8200/v1/auth/jwt/login | jq .
-          echo "-------------------------------------"
       - uses: hashicorp/setup-terraform@v3
       - run: terraform init
       - run: terraform plan

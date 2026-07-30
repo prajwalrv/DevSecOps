@@ -6,3 +6,90 @@
 ==> DevSecOPs for Kubernetes
 ==> SCA, SAST, & DAST
 ==> DevSecOps Captstone project
+
+DevSecOps
+│
+├── 1. DevSecOps Fundamentals
+│     ├── Introduction to DevSecOps
+│     ├── What is DevSecOps?
+│     ├── DevOps vs DevSecOps
+│     ├── Scope of DevSecOps
+│     │     ├── Git Security
+│     │     ├── Infrastructure as Code Security
+│     │     ├── Secure Scripting
+│     │     ├── Container Security
+│     │     ├── Kubernetes Security
+│     │     └── CI/CD Security
+│     ├── Shift Left Principle
+│     ├── Secure SDLC
+│     └── STRIDE Threat Modeling
+│
+├── 2. Source Code Management Security
+│     ├── Git Security
+│     ├── .gitignore
+│     ├── Native Pre-Commit Hooks
+│     ├── Gitleaks
+│     ├── Repository History Scanning
+│     ├── GitHub Actions Secret Scanning
+│     ├── Branch Protection Rules
+│     ├── RBAC
+│     ├── CODEOWNERS
+│     ├── Mandatory Reviews
+│     └── Dependabot
+│
+├── 3. CI/CD Pipeline Security
+│     ├── Secure CI/CD Infrastructure Using
+│     │     HashiCorp Vault
+│     │     GitHub Actions OIDC
+│     │     AWS Dynamic Credentials
+│     ├── Secret Management
+│     ├── Dynamic AWS Credential Generation
+│     ├── OIDC Authentication
+│     ├── Pipeline Security Stages
+│     │     ├── SAST
+│     │     ├── SCA
+│     │     ├── Secret Scanning
+│     │     ├── Container Scanning (Trivy)
+│     │     ├── DAST
+│     │     └── Security Gates
+│     ├── Infrastructure Provisioning with Terraform
+│     └── Security Best Practices
+│
+├── 4. Infrastructure as Code (Terraform) Security
+│     ├── Terraform Security
+│     ├── Vault Integration
+│     ├── IaC Scanning
+│     ├── Policy as Code
+│     └── Secure Infrastructure Provisioning
+│
+├── 5. Container Security
+│     ├── Docker Security
+│     ├── Rootless Containers
+│     ├── Distroless Images
+│     ├── Multi-Stage Builds
+│     ├── Image Scanning (Trivy)
+│     └── Container Hardening
+│
+├── 6. Kubernetes Security
+│     ├── EKS Security
+│     ├── Network Policies
+│     ├── RBAC
+│     ├── Pod Security
+│     ├── Secrets Management
+│     └── Admission Controllers
+│
+├── 7. Monitoring & Runtime Security
+│     ├── Runtime Protection
+│     ├── Logging
+│     ├── SIEM
+│     ├── Alerting
+│     ├── Audit Logs
+│     └── Incident Response
+│
+└── 8. Compliance & Governance
+      ├── Policy as Code
+      ├── CIS Benchmarks
+      ├── NIST
+      ├── ISO 27001
+      ├── SOC 2
+      └── Continuous Compliance

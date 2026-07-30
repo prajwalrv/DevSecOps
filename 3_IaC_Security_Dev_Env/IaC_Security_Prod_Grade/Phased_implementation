@@ -1,0 +1,240 @@
+Production DevSecOps Infrastructure
+
+Phase 1  ✅ Deploy HashiCorp Vault
+Phase 2  ✅ Build High Availability (HA) Cluster
+Phase 3  ✅ Configure Vault Security & Authentication
+Phase 4  ✅ Configure AWS Secrets Engine
+Phase 5  ✅ Configure GitHub OIDC Authentication
+Phase 6  ✅ Integrate Terraform & GitHub Actions
+
+```text
+
+                    GitHub Actions
+                          │
+                 OIDC JWT Authentication
+                          │
+                          ▼
+                  AWS Load Balancer
+                          │
+             HTTPS (TLS Certificate)
+                          │
+        ┌───────────────────────────────┐
+        │      Vault Cluster (HA)       │
+        │                               │
+        │ Vault Node 1                  │
+        │ Vault Node 2                  │
+        │ Vault Node 3                  │
+        └───────────────────────────────┘
+                     │
+          Integrated Storage (Raft)
+                     │
+                     ▼
+             Encrypted Persistent Data
+                     │
+                     ▼
+             AWS Secrets Engine
+                     │
+                     ▼
+        Temporary IAM Credentials
+                     │
+                     ▼
+                Terraform
+```
+```text
+┌──────────────────────────────────────────────────┐
+│ Phase 1 – Deploy HashiCorp Vault                 │
+└──────────────────────────────────────────────────┘
+
+        AWS Console
+              │
+              ▼
+      Launch Ubuntu EC2
+              │
+              ▼
+      Configure Security Group
+      (SSH :22, Vault :8200)
+              │
+              ▼
+      Connect via SSH
+              │
+              ▼
+      Update Packages
+              │
+              ▼
+      Install HashiCorp Vault
+              │
+              ▼
+      Create Vault User
+              │
+              ▼
+      Create Required Directories
+              │
+              ▼
+      Configure vault.hcl
+              │
+      ┌───────┴────────┐
+      │                │
+      ▼                ▼
+ Configure         Configure
+ Raft Storage      TLS Certificates
+      │                │
+      └───────┬────────┘
+              ▼
+     Create System Service
+              │
+              ▼
+       Start Vault Service
+              │
+              ▼
+      Initialize Vault
+              │
+              ▼
+      Generate Unseal Keys
+      & Root Token
+              │
+              ▼
+      Unseal Vault
+              │
+              ▼
+      Login to Vault
+              │
+              ▼
+      Vault Ready
+              │
+              ▼
+┌───────────────────────────────────────────────────┐
+│ Phase 2 – Build High Availability (HA) Cluster    │
+└───────────────────────────────────────────────────┘
+              │
+              ▼
+      Provision Additional EC2 Nodes
+              │
+              ▼
+      Install Vault on Each Node
+              │
+              ▼
+      Configure Raft Storage
+              │
+              ▼
+      Join Existing Cluster
+              │
+              ▼
+      Leader Election
+              │
+              ▼
+      Highly Available Vault Cluster
+              │
+              ▼
+┌──────────────────────────────────────────────────────┐
+│ Phase 3 – Configure Vault Security & Authentication  │
+└──────────────────────────────────────────────────────┘
+              │
+              ▼
+      Enable Audit Logging
+              │
+              ▼
+      Configure Policies
+              │
+              ▼
+      Configure Authentication Methods
+              │
+              ▼
+      Enable JWT/OIDC Authentication
+              │
+              ▼
+      Secure Vault Ready
+              │
+              ▼
+┌────────────────────────────────────────────────────────┐
+│ Phase 4 – Configure AWS Secrets Engine                 │
+└────────────────────────────────────────────────────────┘
+              │
+              ▼
+      Enable AWS Secrets Engine
+              │
+              ▼
+      Configure AWS Authentication
+      (IAM Role / Access Keys)
+              │
+              ▼
+      Create Vault AWS Role
+              │
+              ▼
+      Configure Dynamic IAM Policy
+              │
+              ▼
+      Vault Ready to Generate
+      Temporary AWS Credentials
+              │
+              ▼
+┌──────────────────────────────────────────────────────┐
+│ Phase 5 – Configure GitHub OIDC Authentication       │
+└──────────────────────────────────────────────────────┘
+              │
+              ▼
+      Enable JWT Auth Method
+              │
+              ▼
+      Configure GitHub OIDC Discovery
+              │
+              ▼
+      Create Vault Policy
+              │
+              ▼
+      Create GitHub JWT Role
+              │
+              ▼
+      Bind Repository
+              │
+              ▼
+      GitHub Authentication Ready
+              │
+              ▼
+┌────────────────────────────────────────────────────────┐
+│ Phase 6 – Integrate Terraform & GitHub Actions         │
+└────────────────────────────────────────────────────────┘
+              │
+              ▼
+        Developer Pushes Code
+              │
+              ▼
+        GitHub Actions Workflow
+              │
+              ▼
+        OIDC JWT Authentication
+              │
+              ▼
+        AWS Load Balancer
+              │
+      HTTPS (TLS Certificate)
+              │
+              ▼
+     ┌───────────────────────────────┐
+     │     Vault HA Cluster          │
+     │                               │
+     │  Vault Node 1 (Leader)        │
+     │  Vault Node 2 (Follower)      │
+     │  Vault Node 3 (Follower)      │
+     └───────────────────────────────┘
+              │
+              ▼
+      Integrated Raft Storage
+              │
+              ▼
+     Encrypted Persistent Data
+              │
+              ▼
+      AWS Secrets Engine
+              │
+              ▼
+     Dynamic IAM Credentials
+              │
+              ▼
+      Terraform Apply
+              │
+              ▼
+     AWS Infrastructure Provisioned
+              │
+              ▼
+          ✅ Production DevSecOps Pipeline Complete
+```

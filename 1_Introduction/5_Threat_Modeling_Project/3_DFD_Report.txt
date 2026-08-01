@@ -1,0 +1,36 @@
+External Entities
+-----------------
+EE1 User
+EE2 Android OS
+EE3 Firebase Authentication
+EE4 YouTube Services
+EE5 External Playback Devices
+
+Processes
+----------
+P1 Presentation UI
+P2 Authentication Manager
+P3 Playback Controller
+P4 Search & Metadata Manager
+P5 Stream Manifest Extractor
+P6 ExoPlayer Engine
+P7 Download Manager
+P8 Logging Manager
+
+Data Stores
+-----------
+D1 Room Database
+D2 SimpleCache
+D3 Download Store
+D4 Android Keystore
+D5 Encrypted Preferences
+D6 Local Logs
+
+Trust Boundaries
+----------------
+TB1 User Boundary
+TB2 Internet Boundary
+TB3 Android Sandbox
+TB4 Secure Storage
+TB5 External Device
+TB6 Persistent Storage

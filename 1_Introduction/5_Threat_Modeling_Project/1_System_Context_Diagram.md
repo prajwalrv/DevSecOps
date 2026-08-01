@@ -6,6 +6,12 @@
   ✅ One Process
   ✅ Data Flows
   ✅ Trust Boundaries
+
+  This Context Diagram is intentionally simple. It tells us:
+
+    Who interacts with the system (external entities).
+    What the system is (one process).
+    Where data crosses trust boundaries.
 ```
 ## Context Diagram
 ```text

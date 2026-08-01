@@ -274,6 +274,7 @@ TB4  Secure Storage Boundary
 Application Processes
 ------------------------
 Android Keystore : Keystore has stronger protection than normal app storage.
+Encrypted Preferences : Firebase ID Token (encrypted), Firebase UID, Session state, User preferences
 
 
 TB5  Persistent Storage Boundary
@@ -283,7 +284,6 @@ Application Processes
 Room Database
 SimpleCache
 Download Store
-Encrypted Preferences
 Local Logs
 
 

@@ -246,11 +246,11 @@ EE5 External Playback Devices
 ```
 ## Trust Boundaries (to draw in OWASP Threat Dragon)
 ```text
-TB1  User Boundary
+TB1 Android Application Boundary 
 ────────────────────────────────────────────
-EE1 User : Everything the user enters is untrusted until validated.
+Processes : Processes like P1, P2, P3....
 ------------------------
-P1 Presentation UI
+P1 Presentation UI, .....
 
 
 TB2  Internet Boundary
@@ -267,6 +267,7 @@ TB3  Android Platform Boundary
 Android Music App : app depends on Android for media, permissions, storage APIs, and notifications.
 ------------------------
 Android OS
+Android Keystore
 
 
 TB4  Secure Storage Boundary
